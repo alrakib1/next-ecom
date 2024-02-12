@@ -19,6 +19,8 @@
     ],
     "paths": {
       "@/*": ["./*"],
+      "@lib/*": ["./lib*"],
+      "@models/*": ["./models/*"],
       "@defaultTypes/*": ["./types/*"],
       "@app/*": ["./app/*"],
       "@components/*": ["./components/*"],

@@ -9,6 +9,8 @@ import { useFormik } from "formik";
 
 import * as yup from "yup";
 
+import { filterFormkErrors } from "@/utils/forkikHelpers";
+
 const validationSchema = yup.object().shape({
   name: yup.string().required("Name is required"),
   email: yup.string().email().required("Email is required"),
@@ -19,33 +21,62 @@ const validationSchema = yup.object().shape({
 });
 
 export default function SignUp() {
-  const { values, handleChange, handleBlur, handleSubmit, isSubmitting, errors } =
-    useFormik({
-      initialValues: { name: "", email: "", password: "" },
-      validationSchema,
-      onSubmit: (values) => {
-        console.log(values);
-      },
-    });
+  const {
+    values,
+    handleChange,
+    handleBlur,
+    handleSubmit,
+    isSubmitting,
+    errors,
+    touched,
+  } = useFormik({
+    initialValues: { name: "", email: "", password: "" },
+    validationSchema,
+    onSubmit: async (values, action) => {
+      action.setSubmitting(true);
 
-  const formErrors: string[] = [];
+      await fetch("/api/users", {
+        method: "POST",
+        body: JSON.stringify(values),
+      }).then(async (res) => {
+        if (res.ok) {
+          const result = await res.json();
+          console.log(result);
+        }
+        action.setSubmitting(false);
+      });
+    },
+  });
+
+  const formErrors: string[] = filterFormkErrors(errors, touched, values);
 
   const { email, name, password } = values;
 
-  console.log(errors)
-
   return (
     <AuthFormContainer title="Create New Account" onSubmit={handleSubmit}>
-      <Input name="name" label="Name" onChange={handleChange} value={name} />
-      <Input name="email" label="Email" onChange={handleChange} value={email} />
+      <Input
+        name="name"
+        label="Name"
+        onChange={handleChange}
+        onBlur={handleBlur}
+        value={name}
+      />
+      <Input
+        name="email"
+        label="Email"
+        onChange={handleChange}
+        onBlur={handleBlur}
+        value={email}
+      />
       <Input
         name="password"
         label="Password"
         type="password"
+        onBlur={handleBlur}
         onChange={handleChange}
         value={password}
       />
-      <Button type="submit" className="w-full">
+      <Button disabled={isSubmitting} type="submit" className="w-full">
         Sign up
       </Button>
       <div className="">
