@@ -9,18 +9,20 @@ import { useFormik } from "formik";
 
 import * as yup from "yup";
 
-
 const validationSchema = yup.object().shape({
   name: yup.string().required("Name is required"),
   email: yup.string().email().required("Email is required"),
-  password: yup.string().required("Password is required"),
-
+  password: yup
+    .string()
+    .min(6, "Password must be at least 6 characters!")
+    .required("Password is required"),
 });
 
 export default function SignUp() {
-  const { values, handleChange, handleBlur, handleSubmit, isSubmitting } =
+  const { values, handleChange, handleBlur, handleSubmit, isSubmitting, errors } =
     useFormik({
       initialValues: { name: "", email: "", password: "" },
+      validationSchema,
       onSubmit: (values) => {
         console.log(values);
       },
@@ -30,9 +32,11 @@ export default function SignUp() {
 
   const { email, name, password } = values;
 
+  console.log(errors)
+
   return (
     <AuthFormContainer title="Create New Account" onSubmit={handleSubmit}>
-      <Input name="name" label="Name" onChange={handleChange} value={name}  />
+      <Input name="name" label="Name" onChange={handleChange} value={name} />
       <Input name="email" label="Email" onChange={handleChange} value={email} />
       <Input
         name="password"
