@@ -19,7 +19,7 @@
     ],
     "paths": {
       "@/*": ["./*"],
-      "@lib/*": ["./lib*"],
+      "@lib/*": ["./lib/*"],
       "@models/*": ["./models/*"],
       "@defaultTypes/*": ["./types/*"],
       "@app/*": ["./app/*"],
